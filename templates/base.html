@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Todo App{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        /* Hide sidebar on mobile by default */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                z-index: 40;
+            }
+            #sidebar.mobile-open {
+                left: 0;
+            }
+        }
+        /* Collapsed sidebar styles for desktop */
+        @media (min-width: 769px) {
+            #sidebar.collapsed {
+                width: 5rem !important;
+                overflow: visible;
+            }
+            #sidebar.collapsed .sidebar-text {
+                display: none;
+            }
+            #sidebar.collapsed .sidebar-count {
+                display: none;
+            }
+            #sidebar.collapsed .sidebar-icon {
+                margin: 0 auto;
+            }
+            #sidebar.collapsed #toggleSidebar {
+                display: block !important;
+            }
+            /* Show text on hover when collapsed */
+            #sidebar.collapsed:hover {
+                width: 20rem !important;
+                z-index: 50;
+            }
+            #sidebar.collapsed:hover .sidebar-text {
+                display: block;
+            }
+            #sidebar.collapsed:hover .sidebar-count {
+                display: block;
+            }
+            #sidebar.collapsed:hover .sidebar-icon {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Mobile Hamburger Button -->
+    <button id="mobileMenuBtn" class="md:hidden fixed top-4 right-4 z-50 p-2 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition">
+        <svg id="hamburgerIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebarOverlay" class="hidden md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"></div>
+
+    <div class="flex h-screen bg-white overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-80 md:w-80 bg-gray-50 border-r border-gray-200 flex flex-col transition-all duration-300 relative">
+            <!-- Logo Section -->
+            <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center space-x-3 overflow-hidden">
+                    <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    <div class="sidebar-text">
+                        <h1 class="text-lg font-semibold text-gray-900 whitespace-nowrap">Plan.io</h1>
+                        <p class="text-xs text-gray-500 whitespace-nowrap">{{ user.first_name }} {{ user.last_name }}</p>
+                    </div>
+                </div>
+                <button id="toggleSidebar" class="hidden md:block p-2 hover:bg-gray-200 rounded-lg transition flex-shrink-0">
+                    <svg id="toggleIcon" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Sidebar Content -->
+            <div class="flex-1 overflow-y-auto py-4 px-4">
+                <!-- Private Section -->
+                <div class="mb-6">
+                    <h3 class="sidebar-text text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">Private</h3>
+                    <nav class="space-y-1">
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg sidebar-icon">🏠</span>
+                                <span class="sidebar-text">Home</span>
+                            </div>
+                            <span class="sidebar-count text-xs text-gray-400">11</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg sidebar-icon">✅</span>
+                                <span class="sidebar-text">Completed</span>
+                            </div>
+                            <span class="sidebar-count text-xs text-gray-400">3</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium bg-gray-100 text-gray-900 rounded-lg transition group">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg sidebar-icon">📅</span>
+                                <span class="sidebar-text">Today</span>
+                            </div>
+                            <span class="sidebar-count text-xs text-gray-500 font-semibold">4</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg sidebar-icon">👤</span>
+                                <span class="sidebar-text">Personal</span>
+                            </div>
+                            <span class="sidebar-count text-xs text-gray-400">4</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg sidebar-icon">💼</span>
+                                <span class="sidebar-text">Work</span>
+                            </div>
+                            <span class="sidebar-count text-xs text-gray-400">3</span>
+                        </a>
+                        <button class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
+                            <span class="text-lg sidebar-icon">+</span>
+                            <span class="sidebar-text">Create new list</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Workspace Section -->
+                <div>
+                    <h3 class="sidebar-text text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">Workspace</h3>
+                    <nav class="space-y-1">
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 border-2 border-purple-400 rounded sidebar-icon flex-shrink-0"></div>
+                                <span class="sidebar-text">Odatask</span>
+                            </div>
+                            <button class="sidebar-text opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </button>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 border-2 border-blue-400 rounded sidebar-icon flex-shrink-0"></div>
+                                <span class="sidebar-text">Nexus</span>
+                            </div>
+                            <button class="sidebar-text opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </button>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 border-2 border-cyan-400 rounded sidebar-icon flex-shrink-0"></div>
+                                <span class="sidebar-text">Evrestudio</span>
+                            </div>
+                            <button class="sidebar-text opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </button>
+                        </a>
+                        <button class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
+                            <span class="text-lg sidebar-icon">+</span>
+                            <span class="sidebar-text">Create new workspace</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Logout Option -->
+            <div class="p-4 border-t border-gray-200">
+                <a href="{% url 'logout' %}" class="flex items-center justify-center space-x-2 w-full px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition">
+                    <svg class="w-5 h-5 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    <span class="sidebar-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const hamburgerIcon = document.getElementById('hamburgerIcon');
+        const closeIcon = document.getElementById('closeIcon');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('mobile-open');
+            sidebarOverlay.classList.toggle('hidden');
+            hamburgerIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        sidebarOverlay.addEventListener('click', toggleMobileMenu);
+
+        // Desktop Sidebar Toggle
+        const toggleSidebarBtn = document.getElementById('toggleSidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (toggleSidebarBtn) {
+            toggleSidebarBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                
+                // Change icon based on collapsed state
+                if (sidebar.classList.contains('collapsed')) {
+                    // Show right arrow when collapsed
+                    toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>';
+                } else {
+                    // Show left arrow when expanded
+                    toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

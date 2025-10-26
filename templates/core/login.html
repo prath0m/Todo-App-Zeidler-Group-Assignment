@@ -1,0 +1,600 @@
+{% extends 'publicBase.html' %}
+
+{% block title %}Login - Todo App{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-950 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 max-w-6xl w-full">
+        <!-- Left Section -->
+        <div class="flex flex-col justify-center space-y-8">
+            <!-- Header -->
+            <div>
+                <h1 class="text-5xl font-bold text-white mb-3">Welcome!</h1>
+                <p class="text-gray-400 text-lg">Log in to Todo account to continue to Todo.</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="space-y-6 max-w-sm">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="p-4 rounded-lg {% if message.tags %}bg-red-900 border border-red-700 text-red-200{% else %}bg-green-900 border border-green-700 text-green-200{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Login Form -->
+                <form method="post" class="space-y-5">
+                    {% csrf_token %}
+
+                    <!-- Email Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                        <input type="email" name="email" placeholder="Your email address" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition">
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-300">Password</label>
+                            <button type="button" onclick="openForgotPasswordModal()" class="text-sm text-purple-400 hover:text-purple-300 transition">Forgot password?</button>
+                        </div>
+                        <div class="relative">
+                            <input type="password" name="password" placeholder="Your password" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition" id="password">
+                            <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300" onclick="togglePassword()">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Log In Button -->
+                    <button type="submit" class="w-full gradient-bg text-white font-semibold py-3 rounded-lg hover:opacity-90 transition duration-200 mt-8">
+                        Log In
+                    </button>
+                </form>
+
+                <!-- Sign Up Link -->
+                <div class="text-center text-gray-400 text-sm">
+                    Don't have an account? <a href="{% url 'register' %}" class="text-purple-400 hover:text-purple-300 font-semibold transition">Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section - Hero Visual -->
+        <div class="hidden lg:flex items-center justify-center">
+            <div class="relative w-full h-96">
+                <!-- Floating 3D Box -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="relative w-48 h-48">
+                        <!-- 3D Box shadow effect -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-transparent rounded-lg transform -rotate-6 blur-2xl"></div>
+                        
+                        <!-- Main box -->
+                        <div class="relative w-full h-full border-2 border-purple-500/30 rounded-lg bg-gradient-to-br from-purple-900/20 to-transparent backdrop-blur-sm transform perspective">
+                            <!-- Inner glow -->
+                            <div class="absolute inset-2 border border-purple-400/20 rounded-lg"></div>
+                            
+                            <!-- Floating elements -->
+                            <div class="absolute top-4 right-4 w-3 h-3 rounded-full bg-purple-400/60"></div>
+                            <div class="absolute bottom-6 left-4 w-2 h-2 rounded-full bg-purple-300/40"></div>
+                            <div class="absolute top-1/2 right-6 w-2 h-2 rounded-full bg-purple-400/50"></div>
+                        </div>
+
+                        <!-- Orbital ring -->
+                        <div class="absolute inset-0 border border-purple-500/20 rounded-full transform scale-150 animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Text overlay -->
+                <div class="absolute inset-0 flex flex-col items-center justify-end text-center pb-8">
+                    <p class="text-3xl font-bold text-gray-300 mb-2">400K+ users. 50M+ AI</p>
+                    <p class="text-gray-500 text-lg">generated graphics.</p>
+                </div>
+
+                <!-- Animated float -->
+                <style>
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0px); }
+                        50% { transform: translateY(-20px); }
+                    }
+                    .animate-float {
+                        animation: float 6s ease-in-out infinite;
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-50 px-4">
+        <div class="bg-gray-900 rounded-lg shadow-xl max-w-md w-full p-8 border border-gray-800">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 id="modalTitle" class="text-2xl font-bold text-white">Reset Password</h2>
+                <button type="button" onclick="closeForgotPasswordModal()" class="text-gray-400 hover:text-gray-300 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Step 1: Email Verification -->
+            <div id="step1" class="space-y-4">
+                <p class="text-gray-400 text-sm mb-4">Enter your email address and we'll send you a code to reset your password.</p>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <input type="email" id="resetEmail" placeholder="your@email.com" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition">
+                </div>
+
+                <button type="button" id="sendOtpBtn" onclick="sendResetOTP()" class="w-full gradient-bg text-white font-semibold py-3 rounded-lg hover:opacity-90 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Send Verification Code
+                </button>
+            </div>
+
+            <!-- Step 2: OTP Verification -->
+            <div id="step2" class="space-y-4 hidden">
+                <p class="text-gray-400 text-sm mb-4">Enter the 6-digit code sent to your email.</p>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Verification Code</label>
+                    <input type="text" id="resetOtp" placeholder="000000" maxlength="6" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition text-center text-2xl letter-spacing tracking-widest">
+                    <p id="resetOtpStatus" class="text-sm mt-2 text-gray-400"></p>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="button" id="verifyOtpBtn" onclick="verifyResetOTP()" class="flex-1 gradient-bg text-white font-semibold py-3 rounded-lg hover:opacity-90 transition duration-200">
+                        Verify Code
+                    </button>
+                    <button type="button" id="resendOtpBtn" onclick="resendResetOTP()" class="flex-1 bg-gray-800 border border-gray-700 text-gray-300 font-semibold py-3 rounded-lg hover:bg-gray-700 transition duration-200">
+                        Resend
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Password Reset -->
+            <div id="step3" class="space-y-4 hidden">
+                <p class="text-gray-400 text-sm mb-4">Create your new password.</p>
+                
+                <!-- New Password Field -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">New Password</label>
+                    <div class="relative">
+                        <input type="password" id="newPassword" placeholder="Create a new password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition">
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300" onclick="toggleNewPassword()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Password Strength Indicator -->
+                    <div class="mt-2 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div id="resetPasswordStrengthBar" class="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="resetPasswordStrengthFill" class="h-full w-0 transition-all duration-300"></div>
+                            </div>
+                            <span id="resetPasswordStrengthText" class="text-xs text-gray-400"></span>
+                        </div>
+                        <ul id="resetPasswordRequirements" class="text-xs space-y-1">
+                            <li class="flex items-center gap-2 text-gray-400">
+                                <span id="resetReqLength" class="inline-block w-4 h-4 rounded-full border border-gray-600 flex items-center justify-center text-xs">○</span>
+                                At least 6 characters
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-400">
+                                <span id="resetReqUppercase" class="inline-block w-4 h-4 rounded-full border border-gray-600 flex items-center justify-center text-xs">○</span>
+                                One uppercase letter
+                            </li>
+                            <li class="flex items-center gap-2 text-gray-400">
+                                <span id="resetReqNumber" class="inline-block w-4 h-4 rounded-full border border-gray-600 flex items-center justify-center text-xs">○</span>
+                                One number
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm your new password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition">
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300" onclick="toggleConfirmNewPassword()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="resetPasswordMatchStatus" class="text-sm mt-2 hidden"></p>
+                </div>
+
+                <button type="button" id="resetPasswordBtn" onclick="submitPasswordReset()" class="w-full gradient-bg text-white font-semibold py-3 rounded-lg hover:opacity-90 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Update Password
+                </button>
+            </div>
+
+            <!-- Success Message -->
+            <div id="step4" class="space-y-4 hidden text-center">
+                <div class="mb-4">
+                    <svg class="w-16 h-16 mx-auto text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Password Updated!</h3>
+                <p class="text-gray-400 mb-6">Your password has been successfully reset. You can now log in with your new password.</p>
+                <button type="button" onclick="closeForgotPasswordModal()" class="w-full gradient-bg text-white font-semibold py-3 rounded-lg hover:opacity-90 transition duration-200">
+                    Back to Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Forgot Password Modal Functions
+        function openForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.remove('hidden');
+            resetForgotPasswordModal();
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.add('hidden');
+            resetForgotPasswordModal();
+        }
+
+        function resetForgotPasswordModal() {
+            // Reset all steps to step 1
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            
+            // Reset form fields
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetOtp').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            
+            // Reset email status
+            document.getElementById('resetEmailStatus').classList.add('hidden');
+            document.getElementById('resetEmailCheckIcon').classList.add('hidden');
+            document.getElementById('resetEmail').classList.remove('border-red-500', 'border-green-500');
+            document.getElementById('resetEmail').classList.add('border-gray-700');
+            
+            // Reset buttons
+            document.getElementById('sendOtpBtn').disabled = true;
+            document.getElementById('resetPasswordBtn').disabled = true;
+        }
+
+        // Email Verification
+        const resetEmail = document.getElementById('resetEmail');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+
+        resetEmail.addEventListener('input', function() {
+            const email = this.value.trim();
+
+            if (!email) {
+                sendOtpBtn.disabled = true;
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                sendOtpBtn.disabled = true;
+                return;
+            }
+
+            sendOtpBtn.disabled = false;
+        });
+
+        // Send Reset OTP
+        function sendResetOTP() {
+            const email = document.getElementById('resetEmail').value.trim();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'Sending...';
+
+            fetch('{% url "send_reset_otp" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('step1').classList.add('hidden');
+                    document.getElementById('step2').classList.remove('hidden');
+                    document.getElementById('modalTitle').textContent = 'Verify Code';
+                } else {
+                    alert(data.message || 'Failed to send OTP');
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.textContent = 'Send Verification Code';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send OTP');
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Send Verification Code';
+            });
+        }
+
+        // Verify Reset OTP
+        function verifyResetOTP() {
+            const email = document.getElementById('resetEmail').value.trim();
+            const otp = document.getElementById('resetOtp').value.trim();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+            if (!otp || otp.length !== 6) {
+                document.getElementById('resetOtpStatus').textContent = 'Please enter a valid 6-digit code';
+                document.getElementById('resetOtpStatus').className = 'text-sm mt-2 text-red-400';
+                return;
+            }
+
+            document.getElementById('verifyOtpBtn').disabled = true;
+            document.getElementById('verifyOtpBtn').textContent = 'Verifying...';
+
+            fetch('{% url "verify_reset_otp" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ email: email, otp: otp })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('step2').classList.add('hidden');
+                    document.getElementById('step3').classList.remove('hidden');
+                    document.getElementById('modalTitle').textContent = 'Create New Password';
+                    document.getElementById('verifyOtpBtn').disabled = false;
+                    document.getElementById('verifyOtpBtn').textContent = 'Verify Code';
+                } else {
+                    document.getElementById('resetOtpStatus').textContent = data.message || 'Invalid OTP';
+                    document.getElementById('resetOtpStatus').className = 'text-sm mt-2 text-red-400';
+                    document.getElementById('verifyOtpBtn').disabled = false;
+                    document.getElementById('verifyOtpBtn').textContent = 'Verify Code';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to verify OTP');
+                document.getElementById('verifyOtpBtn').disabled = false;
+                document.getElementById('verifyOtpBtn').textContent = 'Verify Code';
+            });
+        }
+
+        // Resend Reset OTP
+        function resendResetOTP() {
+            const email = document.getElementById('resetEmail').value.trim();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+
+            document.getElementById('resendOtpBtn').disabled = true;
+            document.getElementById('resendOtpBtn').textContent = 'Resending...';
+
+            fetch('{% url "resend_reset_otp" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('resetOtpStatus').textContent = 'Code resent successfully';
+                    document.getElementById('resetOtpStatus').className = 'text-sm mt-2 text-green-400';
+                    document.getElementById('resetOtp').value = '';
+                } else {
+                    alert(data.message || 'Failed to resend OTP');
+                }
+                document.getElementById('resendOtpBtn').disabled = false;
+                document.getElementById('resendOtpBtn').textContent = 'Resend';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to resend OTP');
+                document.getElementById('resendOtpBtn').disabled = false;
+                document.getElementById('resendOtpBtn').textContent = 'Resend';
+            });
+        }
+
+        // Password Validation for Reset
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        const resetPasswordStrengthBar = document.getElementById('resetPasswordStrengthBar');
+        const resetPasswordStrengthFill = document.getElementById('resetPasswordStrengthFill');
+        const resetPasswordStrengthText = document.getElementById('resetPasswordStrengthText');
+        const resetPasswordMatchStatus = document.getElementById('resetPasswordMatchStatus');
+
+        const resetReqLength = document.getElementById('resetReqLength');
+        const resetReqUppercase = document.getElementById('resetReqUppercase');
+        const resetReqNumber = document.getElementById('resetReqNumber');
+
+        function validateResetPasswordStrength(password) {
+            let strength = 0;
+            const requirements = {
+                length: password.length >= 6,
+                uppercase: /[A-Z]/.test(password),
+                number: /\d/.test(password)
+            };
+
+            if (requirements.length) strength += 33;
+            if (requirements.uppercase) strength += 33;
+            if (requirements.number) strength += 34;
+
+            updateResetRequirementUI(resetReqLength, requirements.length);
+            updateResetRequirementUI(resetReqUppercase, requirements.uppercase);
+            updateResetRequirementUI(resetReqNumber, requirements.number);
+
+            resetPasswordStrengthFill.style.width = strength + '%';
+            
+            if (strength === 0) {
+                resetPasswordStrengthFill.className = 'h-full w-0 transition-all duration-300 bg-gray-600';
+                resetPasswordStrengthText.textContent = '';
+            } else if (strength < 50) {
+                resetPasswordStrengthFill.className = 'h-full transition-all duration-300 bg-red-500';
+                resetPasswordStrengthText.textContent = 'Weak';
+                resetPasswordStrengthText.className = 'text-xs text-red-400';
+            } else if (strength < 100) {
+                resetPasswordStrengthFill.className = 'h-full transition-all duration-300 bg-yellow-500';
+                resetPasswordStrengthText.textContent = 'Fair';
+                resetPasswordStrengthText.className = 'text-xs text-yellow-400';
+            } else {
+                resetPasswordStrengthFill.className = 'h-full transition-all duration-300 bg-green-500';
+                resetPasswordStrengthText.textContent = 'Strong';
+                resetPasswordStrengthText.className = 'text-xs text-green-400';
+            }
+
+            return requirements;
+        }
+
+        function updateResetRequirementUI(element, isMet) {
+            if (isMet) {
+                element.textContent = '✓';
+                element.className = 'inline-block w-4 h-4 rounded-full border border-green-500 flex items-center justify-center text-xs text-green-500 bg-green-500/10';
+                element.parentElement.classList.remove('text-gray-400');
+                element.parentElement.classList.add('text-green-400');
+            } else {
+                element.textContent = '○';
+                element.className = 'inline-block w-4 h-4 rounded-full border border-gray-600 flex items-center justify-center text-xs text-gray-400';
+                element.parentElement.classList.remove('text-green-400');
+                element.parentElement.classList.add('text-gray-400');
+            }
+        }
+
+        function validateResetPasswordMatch() {
+            const password = newPasswordInput.value;
+            const passwordConfirm = confirmNewPasswordInput.value;
+
+            if (!passwordConfirm) {
+                resetPasswordMatchStatus.classList.add('hidden');
+                confirmNewPasswordInput.classList.remove('border-red-500', 'border-green-500');
+                confirmNewPasswordInput.classList.add('border-gray-700');
+                return false;
+            }
+
+            resetPasswordMatchStatus.classList.remove('hidden');
+            const matches = password === passwordConfirm;
+
+            if (matches && password.length > 0) {
+                resetPasswordMatchStatus.innerHTML = '<span class="text-green-400">✓ Passwords match</span>';
+                resetPasswordMatchStatus.classList.add('text-green-400');
+                resetPasswordMatchStatus.classList.remove('text-red-400');
+                confirmNewPasswordInput.classList.remove('border-red-500');
+                confirmNewPasswordInput.classList.add('border-green-500');
+            } else if (!matches && passwordConfirm.length > 0) {
+                resetPasswordMatchStatus.innerHTML = '<span class="text-red-400">✗ Passwords do not match</span>';
+                resetPasswordMatchStatus.classList.remove('text-green-400');
+                resetPasswordMatchStatus.classList.add('text-red-400');
+                confirmNewPasswordInput.classList.remove('border-green-500');
+                confirmNewPasswordInput.classList.add('border-red-500');
+            }
+
+            return matches;
+        }
+
+        function validateResetForm() {
+            const password = newPasswordInput.value;
+            const passwordConfirm = confirmNewPasswordInput.value;
+            
+            const isPasswordValid = password.length >= 6 && /[A-Z]/.test(password) && /\d/.test(password);
+            const doPasswordsMatch = password === passwordConfirm && password.length > 0;
+            
+            if (isPasswordValid && doPasswordsMatch) {
+                resetPasswordBtn.disabled = false;
+            } else {
+                resetPasswordBtn.disabled = true;
+            }
+        }
+
+        newPasswordInput.addEventListener('input', function() {
+            validateResetPasswordStrength(this.value);
+            validateResetPasswordMatch();
+            validateResetForm();
+        });
+
+        confirmNewPasswordInput.addEventListener('input', function() {
+            validateResetPasswordMatch();
+            validateResetForm();
+        });
+
+        // Toggle password visibility
+        function toggleNewPassword() {
+            const input = document.getElementById('newPassword');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function toggleConfirmNewPassword() {
+            const input = document.getElementById('confirmNewPassword');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Submit Password Reset
+        function submitPasswordReset() {
+            const email = document.getElementById('resetEmail').value.trim();
+            const newPassword = document.getElementById('newPassword').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+            if (!newPassword) {
+                alert('Please enter a new password');
+                return;
+            }
+
+            resetPasswordBtn.disabled = true;
+            resetPasswordBtn.textContent = 'Updating...';
+
+            fetch('{% url "reset_password" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ email: email, new_password: newPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('step3').classList.add('hidden');
+                    document.getElementById('step4').classList.remove('hidden');
+                    document.getElementById('modalTitle').textContent = 'Password Updated!';
+                } else {
+                    alert(data.message || 'Failed to update password');
+                    resetPasswordBtn.disabled = false;
+                    resetPasswordBtn.textContent = 'Update Password';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update password');
+                resetPasswordBtn.disabled = false;
+                resetPasswordBtn.textContent = 'Update Password';
+            });
+        }
+    </script>
+</div>
+{% endblock %}
