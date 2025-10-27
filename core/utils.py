@@ -47,8 +47,11 @@ def verify_user_otp(email, otp):
     try:
         user_otp = UserOTP.objects.get(email=email, otp=otp)
         
+        from django.utils import timezone
         expiry_time = user_otp.created_at + timedelta(minutes=settings.OTP_EXPIRY_MINUTES)
-        if datetime.now() > expiry_time.replace(tzinfo=None):
+        now = timezone.now()
+        
+        if now > expiry_time:
             user_otp.delete()
             return False, "OTP has expired"
         

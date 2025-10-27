@@ -5,60 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Todo App{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        @media (max-width: 768px) {
-            #sidebar {
-                position: fixed;
-                left: -100%;
-                top: 0;
-                bottom: 0;
-                z-index: 40;
-            }
-            #sidebar.mobile-open {
-                left: 0;
-            }
-        }
-        @media (min-width: 769px) {
-            #sidebar.collapsed {
-                width: 5rem !important;
-                overflow: visible;
-            }
-            #sidebar.collapsed .sidebar-text {
-                display: none;
-            }
-            #sidebar.collapsed .sidebar-count {
-                display: none;
-            }
-            #sidebar.collapsed .sidebar-icon {
-                margin: 0 auto;
-            }
-            #sidebar.collapsed #toggleSidebar {
-                display: block !important;
-            }
-            #sidebar.collapsed:hover {
-                width: 20rem !important;
-                z-index: 50;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            }
-            #sidebar.collapsed:hover .sidebar-text {
-                display: block;
-            }
-            #sidebar.collapsed:hover .sidebar-count {
-                display: block;
-            }
-            #sidebar.collapsed:hover .sidebar-icon {
-                margin: 0;
-            }
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body class="bg-gray-900 text-white">
     <!-- Notification Container -->

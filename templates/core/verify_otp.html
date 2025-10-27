@@ -42,8 +42,12 @@
 
                 <div class="text-center text-gray-400 text-sm">
                     Didn't receive OTP? 
-                    <button type="button" onclick="resendOTP()" class="text-purple-400 hover:text-purple-300 font-semibold transition">
-                        Resend
+                    <button type="button" id="resendBtn" onclick="resendOTP()" class="text-purple-400 hover:text-purple-300 font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2">
+                        <span id="resendText">Resend</span>
+                        <svg id="resendLoader" class="hidden animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                     </button>
                 </div>
 
@@ -77,6 +81,50 @@
     </div>
 
     <script>
+        function showNotification(message, type = 'success') {
+            // Create notification container if it doesn't exist
+            let container = document.getElementById('notificationContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notificationContainer';
+                container.className = 'fixed top-4 right-4 z-50 space-y-2';
+                document.body.appendChild(container);
+            }
+            
+            const notification = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            const icon = type === 'success' 
+                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'
+                : type === 'error'
+                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>'
+                : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+            
+            notification.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 transform translate-x-full transition-transform duration-300 min-w-[320px]`;
+            notification.innerHTML = `
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${icon}
+                </svg>
+                <span class="flex-1 font-medium">${message}</span>
+                <button class="text-white hover:text-gray-200 transition" onclick="this.parentElement.remove()">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
         const inputs = document.querySelectorAll('input[id^="otp"]');
 
         inputs.forEach((input, index) => {
@@ -152,6 +200,14 @@
 
         function resendOTP() {
             const email = '{{ email }}';
+            const resendBtn = document.getElementById('resendBtn');
+            const resendText = document.getElementById('resendText');
+            const resendLoader = document.getElementById('resendLoader');
+            
+            // Show loading state
+            resendBtn.disabled = true;
+            resendText.textContent = 'Sending...';
+            resendLoader.classList.remove('hidden');
             
             fetch('{% url "resend_otp" %}', {
                 method: 'POST',
@@ -163,6 +219,11 @@
             })
             .then(response => response.json())
             .then(data => {
+                // Reset button state
+                resendBtn.disabled = false;
+                resendText.textContent = 'Resend';
+                resendLoader.classList.add('hidden');
+                
                 if (data.success) {
                     showNotification('OTP sent successfully to ' + email, 'success');
                     inputs.forEach(input => input.value = '');
@@ -172,6 +233,11 @@
                 }
             })
             .catch(error => {
+                // Reset button state on error
+                resendBtn.disabled = false;
+                resendText.textContent = 'Resend';
+                resendLoader.classList.add('hidden');
+                
                 console.error('Error:', error);
                 showNotification('An error occurred. Please try again.', 'error');
             });

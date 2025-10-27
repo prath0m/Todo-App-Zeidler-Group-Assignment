@@ -289,12 +289,16 @@ def resend_reset_otp(request):
             
             if not email:
                 return JsonResponse({'success': False, 'message': 'Email is required'})
+            
+            # Delete old password reset records
             PasswordReset.objects.filter(email=email).delete()
             
+            # Create and send new OTP
             if create_and_send_otp(email):
-                import random
-                otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-                PasswordReset.objects.create(email=email, otp=otp)
+                # Get the OTP that was just created
+                user_otp = UserOTP.objects.get(email=email)
+                # Create password reset record with the same OTP
+                PasswordReset.objects.create(email=email, otp=user_otp.otp)
                 
                 return JsonResponse({'success': True, 'message': 'OTP sent successfully'})
             else:
