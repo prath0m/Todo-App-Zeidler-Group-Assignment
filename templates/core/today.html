@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
-
 {% block title %}Today - Plan.io{% endblock %}
-
 {% block content %}
-<!-- Main Content -->
+
 <main class="flex-1 flex flex-col overflow-hidden">
-        <!-- Top Bar -->
         <header class="bg-white border-b border-gray-200 px-8 py-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -15,9 +12,7 @@
             </div>
         </header>
 
-        <!-- Tasks Area -->
         <div class="flex-1 overflow-y-auto bg-gray-50 px-8 py-6">
-            <!-- Add New Task -->
             <div class="mb-6">
                 <button id="newTaskBtn" class="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900 font-medium">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +22,6 @@
                 </button>
             </div>
 
-            <!-- Today Section -->
             <div class="mb-6">
                 <div class="flex items-center space-x-3 mb-4">
                     <button class="text-gray-400 hover:text-gray-600">
@@ -39,7 +33,6 @@
                     <span class="text-sm text-gray-500">{{ today_tasks.count }}</span>
                 </div>
 
-                <!-- Task List -->
                 <div class="space-y-2">
                     {% for task in today_tasks %}
                     <div class="group flex items-start space-x-3 bg-white rounded-lg p-4 hover:shadow-sm transition border-l-4" style="border-left-color: {{ task.color }};" data-task-id="{{ task.id }}">
@@ -98,7 +91,6 @@
         </div>
     </main>
 
-<!-- New Task Modal -->
 <div id="newTaskModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-6">
@@ -113,7 +105,6 @@
         <form id="taskForm">
             {% csrf_token %}
             
-            <!-- Title -->
             <div class="mb-4">
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Task Title *</label>
                 <input 
@@ -125,7 +116,6 @@
                     placeholder="Enter task title">
             </div>
 
-            <!-- Description -->
             <div class="mb-4">
                 <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea 
@@ -136,9 +126,7 @@
                     placeholder="Enter task description (optional)"></textarea>
             </div>
 
-            <!-- Due Date and Time Row -->
             <div class="grid grid-cols-3 gap-4 mb-4">
-                <!-- Due Date -->
                 <div>
                     <label for="due_date" class="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
                     <input 
@@ -149,7 +137,6 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
-                <!-- Due Time -->
                 <div>
                     <label for="due_time" class="block text-sm font-medium text-gray-700 mb-2">Due Time</label>
                     <input 
@@ -159,7 +146,6 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
-                <!-- Priority -->
                 <div>
                     <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
                     <select 
@@ -174,9 +160,7 @@
                 </div>
             </div>
 
-            <!-- Status and Task List Row -->
             <div class="grid grid-cols-3 gap-4 mb-4">
-                <!-- Status -->
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                     <select 
@@ -188,7 +172,6 @@
                     </select>
                 </div>
 
-                <!-- Task List -->
                 <div>
                     <label for="task_list" class="block text-sm font-medium text-gray-700 mb-2">List</label>
                     <select 
@@ -196,11 +179,9 @@
                         name="task_list"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="">None</option>
-                        <!-- Will be populated dynamically -->
                     </select>
                 </div>
 
-                <!-- Workspace -->
                 <div>
                     <label for="workspace" class="block text-sm font-medium text-gray-700 mb-2">Workspace</label>
                     <select 
@@ -208,12 +189,10 @@
                         name="workspace"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="">None</option>
-                        <!-- Will be populated dynamically -->
                     </select>
                 </div>
             </div>
 
-            <!-- Color Picker -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Preview</label>
                 <div class="px-4 py-3 bg-gray-50 rounded-lg border-l-4" id="task_color_preview" style="border-left-color: #667eea;">
@@ -238,7 +217,6 @@
                 <input type="hidden" id="color" name="color" value="#667eea">
             </div>
 
-            <!-- Form Actions -->
             <div class="flex justify-end space-x-3">
                 <button 
                     type="button" 
@@ -257,7 +235,6 @@
 </div>
 
 <script>
-    // Dynamic Greeting based on time
     function updateGreeting() {
         const now = new Date();
         const hours = now.getHours();
@@ -278,7 +255,6 @@
         document.getElementById('greeting').textContent = `${greeting}, ${userName} ${emoji}`;
     }
 
-    // Update date in real-time
     function updateDate() {
         const now = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -286,18 +262,13 @@
         
         document.getElementById('currentDate').textContent = `It's ${dateString}`;
     }
-
-    // Initialize on page load
     updateGreeting();
     updateDate();
-
-    // Update every minute
     setInterval(() => {
         updateGreeting();
         updateDate();
     }, 60000);
 
-    // Modal functionality
     const newTaskBtn = document.getElementById('newTaskBtn');
     const newTaskModal = document.getElementById('newTaskModal');
     const closeTaskModal = document.getElementById('closeTaskModal');
@@ -306,19 +277,16 @@
     const colorBtns = document.querySelectorAll('.color-btn');
     const colorInput = document.getElementById('color');
 
-    // Open modal
     newTaskBtn.addEventListener('click', function() {
         newTaskModal.classList.remove('hidden');
         loadTaskLists();
         loadWorkspaces();
-        // Reset preview color to default
         const preview = document.getElementById('task_color_preview');
         if (preview) {
             preview.style.borderLeftColor = '#667eea';
         }
     });
 
-    // Close modal
     closeTaskModal.addEventListener('click', function() {
         newTaskModal.classList.add('hidden');
         taskForm.reset();
@@ -329,26 +297,19 @@
         taskForm.reset();
     });
 
-    // Close modal on outside click
     newTaskModal.addEventListener('click', function(e) {
         if (e.target === newTaskModal) {
             newTaskModal.classList.add('hidden');
             taskForm.reset();
         }
     });
-
-    // Color selection
     colorBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Remove ring from all buttons
             colorBtns.forEach(b => {
                 b.classList.remove('ring-2', 'ring-blue-500');
             });
-            // Add ring to selected button
             this.classList.add('ring-2', 'ring-blue-500');
-            // Set hidden input value
             colorInput.value = this.dataset.color;
-            // Update preview
             const preview = document.getElementById('task_color_preview');
             if (preview) {
                 preview.style.borderLeftColor = this.dataset.color;
@@ -356,7 +317,6 @@
         });
     });
 
-    // Load task lists
     function loadTaskLists() {
         fetch('/api/task-lists/')
             .then(response => response.json())
@@ -373,7 +333,6 @@
             .catch(error => console.error('Error loading task lists:', error));
     }
 
-    // Load workspaces
     function loadWorkspaces() {
         fetch('/api/workspaces/')
             .then(response => response.json())
@@ -390,14 +349,10 @@
             .catch(error => console.error('Error loading workspaces:', error));
     }
 
-    // Submit form
     taskForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
         const formData = new FormData(taskForm);
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        // Check if we're editing or creating
         const taskId = taskForm.dataset.editingTaskId;
         const url = taskId ? `/api/tasks/${taskId}/update/` : '/api/tasks/create/';
 
@@ -427,7 +382,6 @@
         });
     });
 
-    // Toggle task completion
     document.addEventListener('click', function(e) {
         const toggleBtn = e.target.closest('.toggle-task');
         if (toggleBtn) {
@@ -444,7 +398,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Reload page to show updated task state
                     location.reload();
                 } else {
                     alert('Error: ' + (data.message || 'Failed to toggle task'));
@@ -457,20 +410,17 @@
         }
     });
 
-    // Edit task
     document.addEventListener('click', function(e) {
         const editBtn = e.target.closest('.edit-task');
         if (editBtn) {
             const taskId = editBtn.dataset.taskId;
 
-            // Fetch task data from API
             fetch(`/api/tasks/${taskId}/get/`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         const task = data.task;
                         
-                        // Populate the form
                         document.getElementById('title').value = task.title;
                         document.getElementById('description').value = task.description;
                         document.getElementById('due_date').value = task.due_date;
@@ -481,7 +431,6 @@
                         document.getElementById('workspace').value = task.workspace;
                         document.getElementById('color').value = task.color;
                         
-                        // Update color button selection
                         document.querySelectorAll('.color-btn').forEach(btn => {
                             btn.classList.remove('ring-2', 'ring-blue-500');
                             if (btn.dataset.color === task.color) {
@@ -489,20 +438,16 @@
                             }
                         });
 
-                        // Update preview
                         const preview = document.getElementById('task_color_preview');
                         if (preview) {
                             preview.style.borderLeftColor = task.color;
                         }
 
-                        // Store the task ID for update
                         taskForm.dataset.editingTaskId = taskId;
 
-                        // Change button text
                         const submitBtn = taskForm.querySelector('button[type="submit"]');
                         submitBtn.textContent = 'Update Task';
 
-                        // Show modal
                         newTaskModal.classList.remove('hidden');
                     } else {
                         alert('Error: ' + (data.message || 'Failed to load task'));
@@ -515,7 +460,6 @@
         }
     });
 
-    // Reset form when opening for new task
     newTaskBtn.addEventListener('click', function() {
         delete taskForm.dataset.editingTaskId;
         taskForm.reset();
@@ -523,7 +467,6 @@
         submitBtn.textContent = 'Create Task';
     });
 
-    // Delete task
     document.addEventListener('click', function(e) {
         const deleteBtn = e.target.closest('.delete-task');
         if (deleteBtn) {
@@ -541,7 +484,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Reload page to show updated list
                         location.reload();
                     } else {
                         alert('Error: ' + (data.message || 'Failed to delete task'));

@@ -14,13 +14,11 @@ urlpatterns = [
     path('reset-password/', views.reset_password, name='reset_password'),
     path('resend-reset-otp/', views.resend_reset_otp, name='resend_reset_otp'),
     path('logout/', views.logout, name='logout'),
-    
-    # Pages
+
     path('completed/', views.completed_tasks, name='completed_tasks'),
     path('list/<int:list_id>/', views.task_list_view, name='task_list_view'),
     path('workspace/<int:workspace_id>/', views.workspace_view, name='workspace_view'),
     
-    # API endpoints
     path('api/task-lists/', views.get_task_lists, name='get_task_lists'),
     path('api/task-lists/create/', views.create_task_list, name='create_task_list'),
     path('api/task-lists/<int:list_id>/delete/', views.delete_task_list, name='delete_task_list'),

@@ -14,7 +14,6 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        /* Hide sidebar on mobile by default */
         @media (max-width: 768px) {
             #sidebar {
                 position: fixed;
@@ -27,7 +26,6 @@
                 left: 0;
             }
         }
-        /* Collapsed sidebar styles for desktop */
         @media (min-width: 769px) {
             #sidebar.collapsed {
                 width: 5rem !important;
@@ -45,7 +43,6 @@
             #sidebar.collapsed #toggleSidebar {
                 display: block !important;
             }
-            /* Show text on hover when collapsed */
             #sidebar.collapsed:hover {
                 width: 20rem !important;
                 z-index: 50;
@@ -64,7 +61,6 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white">
-    <!-- Mobile Hamburger Button -->
     <button id="mobileMenuBtn" class="md:hidden fixed top-4 right-4 z-50 p-2 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition">
         <svg id="hamburgerIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -73,14 +69,10 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
     </button>
-
-    <!-- Overlay for mobile -->
     <div id="sidebarOverlay" class="hidden md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"></div>
 
     <div class="flex h-screen bg-white overflow-hidden">
-        <!-- Sidebar -->
         <aside id="sidebar" class="w-80 md:w-80 bg-gray-50 border-r border-gray-200 flex flex-col transition-all duration-300 relative">
-            <!-- Logo Section -->
             <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center space-x-3 overflow-hidden">
                     <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -100,9 +92,7 @@
                 </button>
             </div>
 
-            <!-- Sidebar Content -->
             <div class="flex-1 overflow-y-auto py-4 px-4">
-                <!-- Private Section -->
                 <div class="mb-6">
                     <h3 class="sidebar-text text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">Private</h3>
                     <nav class="space-y-1">
@@ -129,8 +119,6 @@
                         </a>
                         
                     <h3 class="sidebar-text text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3 ">Lists</h3>
-
-                        <!-- Dynamic Task Lists -->
                         {% for task_list in task_lists %}
                         <div class="relative flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group {% if request.resolver_match.url_name == 'task_list_view' and request.resolver_match.kwargs.list_id|stringformat:'s' == task_list.id|stringformat:'s' %}bg-gray-100 text-gray-900{% endif %}">
                             <a href="{% url 'task_list_view' task_list.id %}" class="flex items-center space-x-3 flex-1 min-w-0">
@@ -167,11 +155,9 @@
                     </nav>
                 </div>
 
-                <!-- Workspace Section -->
                 <div>
                     <h3 class="sidebar-text text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">Workspace</h3>
                     <nav class="space-y-1">
-                        <!-- Dynamic Workspaces -->
                         {% for workspace in workspaces %}
                         <div class="relative flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition group {% if request.resolver_match.url_name == 'workspace_view' and request.resolver_match.kwargs.workspace_id|stringformat:'s' == workspace.id|stringformat:'s' %}bg-gray-100 text-gray-900{% endif %}">
                             <a href="{% url 'workspace_view' workspace.id %}" class="flex items-center space-x-3 flex-1 min-w-0">
@@ -209,7 +195,6 @@
                 </div>
             </div>
 
-            <!-- Logout Option -->
             <div class="p-4 border-t border-gray-200">
                 <a href="{% url 'logout' %}" class="flex items-center justify-center space-x-2 w-full px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition">
                     <svg class="w-5 h-5 sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,12 +205,10 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         {% block content %}{% endblock %}
     </div>
 
     <script>
-        // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -241,28 +224,21 @@
 
         mobileMenuBtn.addEventListener('click', toggleMobileMenu);
         sidebarOverlay.addEventListener('click', toggleMobileMenu);
-
-        // Desktop Sidebar Toggle
         const toggleSidebarBtn = document.getElementById('toggleSidebar');
         const toggleIcon = document.getElementById('toggleIcon');
         
         if (toggleSidebarBtn) {
             toggleSidebarBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                
-                // Change icon based on collapsed state
+                sidebar.classList.toggle('collapsed')                
                 if (sidebar.classList.contains('collapsed')) {
-                    // Show right arrow when collapsed
                     toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>';
                 } else {
-                    // Show left arrow when expanded
                     toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>';
                 }
             });
         }
     </script>
 
-    <!-- Create Task List Modal -->
     <div id="createListModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
             <div class="flex items-center justify-between mb-6">
@@ -326,7 +302,6 @@
         </div>
     </div>
 
-    <!-- Create Workspace Modal -->
     <div id="createWorkspaceModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
             <div class="flex items-center justify-between mb-6">
@@ -390,7 +365,6 @@
     </div>
 
     <script>
-        // Create List Modal
         const createListBtn = document.getElementById('createListBtn');
         const createListModal = document.getElementById('createListModal');
         const closeListModal = document.getElementById('closeListModal');
@@ -402,7 +376,6 @@
         const listPreviewName = document.getElementById('list_preview_name');
         const listPreviewColor = document.getElementById('list_preview_color');
 
-        // Update list preview on name change
         if (listNameInput) {
             listNameInput.addEventListener('input', function() {
                 listPreviewName.textContent = this.value || 'My List';
@@ -435,7 +408,6 @@
             });
         }
 
-        // List color selection
         listColorBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 listColorBtns.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
@@ -445,7 +417,6 @@
             });
         });
 
-        // Submit list form
         if (listForm) {
             listForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -477,7 +448,6 @@
             });
         }
 
-        // Create Workspace Modal
         const createWorkspaceBtn = document.getElementById('createWorkspaceBtn');
         const createWorkspaceModal = document.getElementById('createWorkspaceModal');
         const closeWorkspaceModal = document.getElementById('closeWorkspaceModal');
@@ -489,7 +459,6 @@
         const workspacePreviewName = document.getElementById('workspace_preview_name');
         const workspacePreviewColor = document.getElementById('workspace_preview_color');
 
-        // Update workspace preview on name change
         if (workspaceNameInput) {
             workspaceNameInput.addEventListener('input', function() {
                 workspacePreviewName.textContent = this.value || 'My Workspace';
@@ -522,7 +491,6 @@
             });
         }
 
-        // Workspace color selection
         workspaceColorBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 workspaceColorBtns.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
@@ -532,7 +500,6 @@
             });
         });
 
-        // Submit workspace form
         if (workspaceForm) {
             workspaceForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -564,9 +531,7 @@
             });
         }
 
-        // List and Workspace menu toggles
         document.addEventListener('click', function(e) {
-            // Toggle list menu
             if (e.target.closest('.list-menu-btn')) {
                 const btn = e.target.closest('.list-menu-btn');
                 const menu = btn.nextElementSibling;
@@ -579,7 +544,6 @@
                 menu.classList.toggle('hidden');
                 e.stopPropagation();
             }
-            // Toggle workspace menu
             else if (e.target.closest('.workspace-menu-btn')) {
                 const btn = e.target.closest('.workspace-menu-btn');
                 const menu = btn.nextElementSibling;
@@ -592,7 +556,6 @@
                 menu.classList.toggle('hidden');
                 e.stopPropagation();
             }
-            // Close menus when clicking outside
             else {
                 document.querySelectorAll('.list-menu, .workspace-menu').forEach(menu => {
                     menu.classList.add('hidden');
@@ -600,7 +563,6 @@
             }
         });
 
-        // Delete list
         document.addEventListener('click', function(e) {
             if (e.target.closest('.delete-list')) {
                 const btn = e.target.closest('.delete-list');
@@ -633,7 +595,6 @@
             }
         });
 
-        // Delete workspace
         document.addEventListener('click', function(e) {
             if (e.target.closest('.delete-workspace')) {
                 const btn = e.target.closest('.delete-workspace');

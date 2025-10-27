@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
-
 {% block title %}{{ task_list.name }} - Todo App{% endblock %}
-
 {% block content %}
-<!-- Main Content -->
+
 <main class="flex-1 flex flex-col overflow-hidden">
-        <!-- Top Bar -->
         <header class="bg-white border-b border-gray-200 px-8 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -17,10 +14,7 @@
                 </div>
             </div>
         </header>
-
-        <!-- Tasks Area -->
         <div class="flex-1 overflow-y-auto bg-gray-50 px-8 py-6">
-            <!-- Add New Task -->
             <div class="mb-6">
                 <button id="newTaskBtn" class="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900 font-medium">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,14 +24,12 @@
                 </button>
             </div>
 
-            <!-- Tasks Section -->
             <div class="mb-6">
                 <div class="flex items-center space-x-3 mb-4">
                     <h2 class="text-base font-semibold text-gray-900">Tasks</h2>
                     <span class="text-sm text-gray-500">{{ list_tasks.count }}</span>
                 </div>
 
-                <!-- Task List -->
                 <div class="space-y-2">
                     {% for task in list_tasks %}
                     <div class="group flex items-start space-x-3 bg-white rounded-lg p-4 hover:shadow-sm transition border-l-4" style="border-left-color: {{ task.color }};" data-task-id="{{ task.id }}">
@@ -108,7 +100,6 @@
         </div>
     </main>
 
-<!-- New Task Modal -->
 <div id="newTaskModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-6">
@@ -122,8 +113,6 @@
 
         <form id="taskForm">
             {% csrf_token %}
-            
-            <!-- Title -->
             <div class="mb-4">
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Task Title *</label>
                 <input 
@@ -135,7 +124,6 @@
                     placeholder="Enter task title">
             </div>
 
-            <!-- Description -->
             <div class="mb-4">
                 <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea 
@@ -145,10 +133,7 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter task description (optional)"></textarea>
             </div>
-
-            <!-- Due Date and Time Row -->
             <div class="grid grid-cols-3 gap-4 mb-4">
-                <!-- Due Date -->
                 <div>
                     <label for="due_date" class="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
                     <input 
@@ -158,7 +143,6 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
-                <!-- Due Time -->
                 <div>
                     <label for="due_time" class="block text-sm font-medium text-gray-700 mb-2">Due Time</label>
                     <input 
@@ -168,7 +152,6 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
-                <!-- Priority -->
                 <div>
                     <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
                     <select 
@@ -183,9 +166,7 @@
                 </div>
             </div>
 
-            <!-- Status and Task List Row -->
             <div class="grid grid-cols-3 gap-4 mb-4">
-                <!-- Status -->
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                     <select 
@@ -197,7 +178,6 @@
                     </select>
                 </div>
 
-                <!-- Task List -->
                 <div>
                     <label for="task_list" class="block text-sm font-medium text-gray-700 mb-2">List</label>
                     <select 
@@ -205,11 +185,9 @@
                         name="task_list"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="">None</option>
-                        <!-- Will be populated dynamically -->
                     </select>
                 </div>
 
-                <!-- Workspace -->
                 <div>
                     <label for="workspace" class="block text-sm font-medium text-gray-700 mb-2">Workspace</label>
                     <select 
@@ -217,12 +195,10 @@
                         name="workspace"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="">None</option>
-                        <!-- Will be populated dynamically -->
                     </select>
                 </div>
             </div>
 
-            <!-- Color Picker -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Preview</label>
                 <div class="px-4 py-3 bg-gray-50 rounded-lg border-l-4" id="task_color_preview" style="border-left-color: #667eea;">
@@ -247,7 +223,6 @@
                 <input type="hidden" id="color" name="color" value="#667eea">
             </div>
 
-            <!-- Form Actions -->
             <div class="flex justify-end space-x-3">
                 <button 
                     type="button" 
@@ -266,7 +241,6 @@
 </div>
 
 <script>
-    // Modal functionality
     const newTaskBtn = document.getElementById('newTaskBtn');
     const newTaskModal = document.getElementById('newTaskModal');
     const closeTaskModal = document.getElementById('closeTaskModal');
@@ -275,7 +249,6 @@
 
     newTaskBtn.addEventListener('click', () => {
         newTaskModal.classList.remove('hidden');
-        // Reset preview color to default
         const preview = document.getElementById('task_color_preview');
         if (preview) {
             preview.style.borderLeftColor = '#667eea';
@@ -284,7 +257,6 @@
     closeTaskModal.addEventListener('click', () => newTaskModal.classList.add('hidden'));
     cancelTaskBtn.addEventListener('click', () => newTaskModal.classList.add('hidden'));
 
-    // Load task lists and workspaces
     fetch('/api/task-lists/')
         .then(response => response.json())
         .then(data => {
@@ -309,7 +281,6 @@
             });
         });
 
-    // Color picker
     document.querySelectorAll('.color-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.color-btn').forEach(b => {
@@ -317,7 +288,6 @@
             });
             this.classList.add('ring-2', 'ring-blue-500');
             document.getElementById('color').value = this.dataset.color;
-            // Update preview
             const preview = document.getElementById('task_color_preview');
             if (preview) {
                 preview.style.borderLeftColor = this.dataset.color;
@@ -325,7 +295,6 @@
         });
     });
 
-    // Form submission
     taskForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
@@ -353,7 +322,6 @@
         });
     });
 
-    // Toggle task completion
     document.addEventListener('click', function(e) {
         const toggleBtn = e.target.closest('.toggle-task');
         if (toggleBtn) {
@@ -382,7 +350,6 @@
         }
     });
 
-    // Edit task
     document.addEventListener('click', function(e) {
         const editBtn = e.target.closest('.edit-task');
         if (editBtn) {
@@ -411,7 +378,6 @@
                             }
                         });
 
-                        // Update preview
                         const preview = document.getElementById('task_color_preview');
                         if (preview) {
                             preview.style.borderLeftColor = task.color;
@@ -432,7 +398,6 @@
         }
     });
 
-    // Reset form when opening for new task
     newTaskBtn.addEventListener('click', function() {
         delete taskForm.dataset.editingTaskId;
         taskForm.reset();
@@ -440,7 +405,6 @@
         submitBtn.textContent = 'Create Task';
     });
 
-    // Delete task
     document.addEventListener('click', function(e) {
         const deleteBtn = e.target.closest('.delete-task');
         if (deleteBtn) {

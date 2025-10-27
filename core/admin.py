@@ -11,8 +11,8 @@ class TodoAdmin(admin.ModelAdmin):
 
 @admin.register(TaskList)
 class TaskListAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'list_type', 'color', 'created_at')
-    list_filter = ('list_type', 'created_at')
+    list_display = ('name', 'user', 'color', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('name', 'user__username')
 
 @admin.register(Workspace)
