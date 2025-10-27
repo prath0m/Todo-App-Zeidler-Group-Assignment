@@ -164,17 +164,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('OTP sent successfully to ' + email);
-                    // Clear OTP fields
+                    showNotification('OTP sent successfully to ' + email, 'success');
                     inputs.forEach(input => input.value = '');
                     inputs[0].focus();
                 } else {
-                    alert('Failed to send OTP: ' + data.message);
+                    showNotification('Failed to send OTP: ' + data.message, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                showNotification('An error occurred. Please try again.', 'error');
             });
         }
     </script>

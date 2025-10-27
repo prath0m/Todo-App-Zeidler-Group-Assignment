@@ -260,7 +260,7 @@
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 
             if (!email) {
-                alert('Please enter your email');
+                showNotification('Please enter your email', 'error');
                 return;
             }
 
@@ -282,14 +282,14 @@
                     document.getElementById('step2').classList.remove('hidden');
                     document.getElementById('modalTitle').textContent = 'Verify Code';
                 } else {
-                    alert(data.message || 'Failed to send OTP');
+                    showNotification(data.message || 'Failed to send OTP', 'error');
                     sendOtpBtn.disabled = false;
                     sendOtpBtn.textContent = 'Send Verification Code';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to send OTP');
+                showNotification('Failed to send OTP', 'error');
                 sendOtpBtn.disabled = false;
                 sendOtpBtn.textContent = 'Send Verification Code';
             });
@@ -334,7 +334,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to verify OTP');
+                showNotification('Failed to verify OTP', 'error');
                 document.getElementById('verifyOtpBtn').disabled = false;
                 document.getElementById('verifyOtpBtn').textContent = 'Verify Code';
             });
@@ -345,7 +345,7 @@
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 
             if (!email) {
-                alert('Please enter your email');
+                showNotification('Please enter your email', 'error');
                 return;
             }
 
@@ -367,14 +367,14 @@
                     document.getElementById('resetOtpStatus').className = 'text-sm mt-2 text-green-400';
                     document.getElementById('resetOtp').value = '';
                 } else {
-                    alert(data.message || 'Failed to resend OTP');
+                    showNotification(data.message || 'Failed to resend OTP', 'error');
                 }
                 document.getElementById('resendOtpBtn').disabled = false;
                 document.getElementById('resendOtpBtn').textContent = 'Resend';
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to resend OTP');
+                showNotification('Failed to resend OTP', 'error');
                 document.getElementById('resendOtpBtn').disabled = false;
                 document.getElementById('resendOtpBtn').textContent = 'Resend';
             });
@@ -515,7 +515,7 @@
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 
             if (!newPassword) {
-                alert('Please enter a new password');
+                showNotification('Please enter a new password', 'error');
                 return;
             }
 
@@ -537,14 +537,14 @@
                     document.getElementById('step4').classList.remove('hidden');
                     document.getElementById('modalTitle').textContent = 'Password Updated!';
                 } else {
-                    alert(data.message || 'Failed to update password');
+                    showNotification(data.message || 'Failed to update password', 'error');
                     resetPasswordBtn.disabled = false;
                     resetPasswordBtn.textContent = 'Update Password';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to update password');
+                showNotification('Failed to update password', 'error');
                 resetPasswordBtn.disabled = false;
                 resetPasswordBtn.textContent = 'Update Password';
             });
