@@ -82,7 +82,6 @@
 
     <script>
         function showNotification(message, type = 'success') {
-            // Create notification container if it doesn't exist
             let container = document.getElementById('notificationContainer');
             if (!container) {
                 container = document.createElement('div');
@@ -204,7 +203,6 @@
             const resendText = document.getElementById('resendText');
             const resendLoader = document.getElementById('resendLoader');
             
-            // Show loading state
             resendBtn.disabled = true;
             resendText.textContent = 'Sending...';
             resendLoader.classList.remove('hidden');
@@ -219,7 +217,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Reset button state
                 resendBtn.disabled = false;
                 resendText.textContent = 'Resend';
                 resendLoader.classList.add('hidden');
@@ -233,7 +230,6 @@
                 }
             })
             .catch(error => {
-                // Reset button state on error
                 resendBtn.disabled = false;
                 resendText.textContent = 'Resend';
                 resendLoader.classList.add('hidden');

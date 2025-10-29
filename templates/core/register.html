@@ -123,8 +123,8 @@
                 </div>
 
                 <div class="absolute inset-0 flex flex-col items-center justify-end text-center pb-8">
-                    <p class="text-3xl font-bold text-gray-300 mb-2">400K+ users. 50M+ AI</p>
-                    <p class="text-gray-500 text-lg">generated graphics.</p>
+                    <p class="text-3xl font-bold text-gray-300 mb-2">Interactive Users Interface</p>
+                    <p class="text-gray-500 text-lg">Todo App</p>
                 </div>
             </div>
         </div>
@@ -243,13 +243,11 @@
             validatePasswordMatch();
         });
 
-        // Handle form submission with loading state
         registerForm.addEventListener('submit', function(e) {
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
             const btnLoader = document.getElementById('btnLoader');
             
-            // Show loading state
             submitBtn.disabled = true;
             btnText.classList.add('hidden');
             btnLoader.classList.remove('hidden');
